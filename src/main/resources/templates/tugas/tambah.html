@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="id">
+<head th:replace="~{fragments/layout :: html_head('Tambah Tugas Baru - To-Do List Mahasiswa')}">
+</head>
+<body>
+
+<div class="app-wrapper">
+    <!-- Overlay untuk Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar Fragment -->
+    <div th:replace="~{fragments/layout :: sidebar(${activePage})}"></div>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Header Fragment -->
+        <div th:replace="~{fragments/layout :: top_header(${pageTitle})}"></div>
+
+        <!-- Main Content Area -->
+        <main class="content-area">
+
+            <!-- Breadcrumb Navigation -->
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/tugas}" class="text-decoration-none">Daftar Tugas</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Tambah Tugas</li>
+                </ol>
+            </nav>
+
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-9 col-xl-8">
+                    <!-- Form Card -->
+                    <div class="card-custom p-4 p-md-5">
+                        <div class="d-flex align-items-center justify-content-between pb-3 mb-4 border-bottom">
+                            <div>
+                                <h4 class="fw-bold mb-1">Formulir Tugas Perkuliahan</h4>
+                                <p class="text-muted small mb-0">Isi data tugas kuliah yang perlu Anda selesaikan tepat waktu</p>
+                            </div>
+                            <span class="badge bg-primary bg-opacity-10 text-primary py-2 px-3 rounded-pill fw-semibold">
+                                <i class="bi bi-info-circle me-1"></i> Mode UI Mockup
+                            </span>
+                        </div>
+
+                        <!-- Form Tambah Tugas (UI Prototype) -->
+                        <form id="formTambahTugas">
+                            <!-- 1. Nama Tugas -->
+                            <div class="mb-3">
+                                <label for="namaTugas" class="form-label-custom">
+                                    Nama Tugas <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control form-control-custom" id="namaTugas" required
+                                       placeholder="Contoh: Laporan Akhir Praktikum Basis Data Modul 5">
+                                <div class="form-text">Tuliskan judul atau nama tugas dengan jelas dan spesifik.</div>
+                            </div>
+
+                            <!-- 2. Mata Kuliah -->
+                            <div class="mb-3">
+                                <label for="mataKuliah" class="form-label-custom">
+                                    Mata Kuliah <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select form-select-custom" id="mataKuliah" required>
+                                    <option value="" disabled selected>-- Pilih Mata Kuliah --</option>
+                                    <option value="Kecerdasan Buatan">Kecerdasan Buatan</option>
+                                    <option value="Jaringan Komputer">Jaringan Komputer</option>
+                                    <option value="Basis Data Lanjut">Basis Data Lanjut</option>
+                                    <option value="Pemrograman Web">Pemrograman Web</option>
+                                    <option value="Etika Profesi TI">Etika Profesi TI</option>
+                                    <option value="Interaksi Manusia dan Komputer">Interaksi Manusia dan Komputer</option>
+                                    <option value="Rekayasa Perangkat Lunak">Rekayasa Perangkat Lunak</option>
+                                    <option value="Sistem Operasi">Sistem Operasi</option>
+                                </select>
+                            </div>
+
+                            <!-- 3. Deskripsi Tugas -->
+                            <div class="mb-3">
+                                <label for="deskripsiTugas" class="form-label-custom">Deskripsi Tugas</label>
+                                <textarea class="form-control form-control-custom" id="deskripsiTugas" rows="4"
+                                          placeholder="Tuliskan petunjuk pengerjaan, format berkas pengumpulan, atau catatan penting lainnya..."></textarea>
+                            </div>
+
+                            <div class="row g-3 mb-4">
+                                <!-- 4. Tanggal Deadline -->
+                                <div class="col-12 col-md-4">
+                                    <label for="deadline" class="form-label-custom">
+                                        Tanggal Deadline <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="date" class="form-control form-control-custom" id="deadline" required>
+                                </div>
+
+                                <!-- 5. Status Pengerjaan -->
+                                <div class="col-12 col-md-4">
+                                    <label for="status" class="form-label-custom">
+                                        Status Pengerjaan <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select form-select-custom" id="status" required>
+                                        <option value="Belum Dikerjakan" selected>Belum Dikerjakan</option>
+                                        <option value="Sedang Dikerjakan">Sedang Dikerjakan</option>
+                                        <option value="Selesai">Selesai</option>
+                                    </select>
+                                </div>
+
+                                <!-- 6. Tingkat Prioritas -->
+                                <div class="col-12 col-md-4">
+                                    <label for="prioritas" class="form-label-custom">
+                                        Prioritas <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select form-select-custom" id="prioritas" required>
+                                        <option value="Rendah">Rendah</option>
+                                        <option value="Sedang" selected>Sedang</option>
+                                        <option value="Tinggi">Tinggi</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Alert Info Simulasi UI -->
+                            <div class="alert alert-info d-flex align-items-center mb-4 py-2 px-3 small border-0" 
+                                 style="background-color: #f0fdf4; color: #166534; border-left: 4px solid #22c55e !important;">
+                                <i class="bi bi-lightbulb-fill me-2 fs-5 text-success"></i>
+                                <div>
+                                    Formulir ini saat ini berfungsi sebagai rancangan antarmuka (UI). Penyimpanan persisten ke database MySQL akan ditambahkan pada modul praktikum selanjutnya.
+                                </div>
+                            </div>
+
+                            <!-- 7. Tombol Aksi: Simpan dan Batal -->
+                            <div class="d-flex align-items-center justify-content-end gap-2 pt-3 border-top">
+                                <a th:href="@{/tugas}" class="btn btn-outline-secondary px-4 py-2 fw-semibold">
+                                    <i class="bi bi-x-circle me-1"></i> Batal
+                                </a>
+                                <button type="submit" class="btn btn-primary-custom px-4 py-2">
+                                    <i class="bi bi-check-circle me-1"></i> Simpan Tugas
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Footer Fragment -->
+        <div th:replace="~{fragments/layout :: footer}"></div>
+    </div>
+</div>
+
+<!-- Scripts Fragment -->
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+</body>
+</html>

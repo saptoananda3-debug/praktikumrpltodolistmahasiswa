@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="id">
+<head th:replace="~{fragments/layout :: html_head('Dashboard - To-Do List Mahasiswa')}">
+</head>
+<body>
+
+<div class="app-wrapper">
+    <!-- Overlay untuk Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar Fragment -->
+    <div th:replace="~{fragments/layout :: sidebar(${activePage})}"></div>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Header Fragment -->
+        <div th:replace="~{fragments/layout :: top_header(${pageTitle})}"></div>
+
+        <!-- Main Content Area -->
+        <main class="content-area">
+
+            <!-- Banner Sambutan / Ringkasan -->
+            <div class="card-custom p-4 mb-4" style="background: linear-gradient(135deg, #1e3a8a, #2563eb); color: #ffffff;">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h2 class="fw-bold mb-2 text-white">Selamat Datang di Portal Tugas Mahasiswa! 👋</h2>
+                        <p class="mb-0 text-white-50" style="font-size: 0.95rem;">
+                            Pantau progres pengerjaan tugas perkuliahan, atur prioritas, dan pastikan tidak ada tugas yang terlewat deadline.
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                        <a th:href="@{/tugas/tambah}" class="btn btn-light fw-semibold text-primary px-3 py-2 shadow-sm">
+                            <i class="bi bi-plus-circle me-1"></i> Tambah Tugas Baru
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bagian 1: Empat Kartu Statistik -->
+            <div class="row g-3 mb-4">
+                <!-- 1. Total Tugas -->
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card-custom stat-card total">
+                        <div class="stat-icon-wrapper">
+                            <i class="bi bi-journal-bookmark-fill"></i>
+                        </div>
+                        <div>
+                            <div class="stat-value" th:text="${totalTugas}">6</div>
+                            <p class="stat-label">Total Tugas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Belum Dikerjakan -->
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card-custom stat-card belum">
+                        <div class="stat-icon-wrapper">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
+                        <div>
+                            <div class="stat-value text-warning" th:text="${belumDikerjakan}">2</div>
+                            <p class="stat-label">Belum Dikerjakan</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Sedang Dikerjakan -->
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card-custom stat-card sedang">
+                        <div class="stat-icon-wrapper">
+                            <i class="bi bi-arrow-repeat"></i>
+                        </div>
+                        <div>
+                            <div class="stat-value text-info" th:text="${sedangDikerjakan}">2</div>
+                            <p class="stat-label">Sedang Dikerjakan</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Selesai -->
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card-custom stat-card selesai">
+                        <div class="stat-icon-wrapper">
+                            <i class="bi bi-check2-circle"></i>
+                        </div>
+                        <div>
+                            <div class="stat-value text-success" th:text="${selesai}">2</div>
+                            <p class="stat-label">Selesai</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bagian 2: Tabel Ringkasan Tugas -->
+            <div class="card-custom">
+                <div class="p-3 p-md-4 border-bottom d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+                    <div>
+                        <h5 class="fw-bold mb-1">Daftar Tugas Terbaru</h5>
+                        <p class="text-muted small mb-0">Memantau tugas perkuliahan terdaftar beserta status pengerjaannya</p>
+                    </div>
+                    <div>
+                        <a th:href="@{/tugas}" class="btn btn-outline-primary btn-sm px-3 fw-semibold">
+                            Lihat Semua Tugas <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-custom table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">No.</th>
+                                <th>Nama Tugas</th>
+                                <th>Mata Kuliah</th>
+                                <th>Deadline</th>
+                                <th>Prioritas</th>
+                                <th>Status</th>
+                                <th class="text-center" style="width: 120px;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Iterasi Data Dummy Tugas Menggunakan Thymeleaf -->
+                            <tr th:each="tugas, iterStat : ${daftarTugas}">
+                                <td class="fw-semibold text-muted" th:text="${iterStat.count}">1</td>
+                                <td>
+                                    <div class="fw-semibold" th:text="${tugas.namaTugas}">Nama Tugas</div>
+                                    <small class="text-muted d-block text-truncate" style="max-width: 320px;" th:text="${tugas.deskripsi}">Deskripsi</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border" th:text="${tugas.mataKuliah}">Mata Kuliah</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1">
+                                        <i class="bi bi-calendar-event text-muted small"></i>
+                                        <span th:text="${tugas.formattedDeadline}">01 Nov 2026</span>
+                                    </div>
+                                    <!-- Badge Terlambat Jika Melewati Batas Waktu -->
+                                    <span th:if="${tugas.terlambat}" class="badge badge-custom badge-terlambat mt-1">
+                                        <i class="bi bi-exclamation-triangle-fill"></i> Terlambat
+                                    </span>
+                                </td>
+                                <td>
+                                    <!-- Badge Prioritas -->
+                                    <span th:if="${tugas.prioritas == 'Tinggi'}" class="badge badge-custom badge-prioritas-tinggi">
+                                        <i class="bi bi-flag-fill"></i> Tinggi
+                                    </span>
+                                    <span th:if="${tugas.prioritas == 'Sedang'}" class="badge badge-custom badge-prioritas-sedang">
+                                        <i class="bi bi-flag-fill"></i> Sedang
+                                    </span>
+                                    <span th:if="${tugas.prioritas == 'Rendah'}" class="badge badge-custom badge-prioritas-rendah">
+                                        <i class="bi bi-flag-fill"></i> Rendah
+                                    </span>
+                                </td>
+                                <td>
+                                    <!-- Badge Status -->
+                                    <span th:if="${tugas.status == 'Belum Dikerjakan'}" class="badge badge-custom badge-status-belum">
+                                        <i class="bi bi-circle"></i> Belum Dikerjakan
+                                    </span>
+                                    <span th:if="${tugas.status == 'Sedang Dikerjakan'}" class="badge badge-custom badge-status-sedang">
+                                        <i class="bi bi-hourglass-split"></i> Sedang Dikerjakan
+                                    </span>
+                                    <span th:if="${tugas.status == 'Selesai'}" class="badge badge-custom badge-status-selesai">
+                                        <i class="bi bi-check-circle-fill"></i> Selesai
+                                    </span>
+                                </td>
+                                <td>
+                                    <!-- Tombol Aksi UI Saja -->
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <button type="button" class="btn-action btn-edit" 
+                                                title="Edit Tugas (UI Mockup)"
+                                                data-action="edit"
+                                                th:data-tugas-nama="${tugas.namaTugas}">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button type="button" class="btn-action btn-delete" 
+                                                title="Hapus Tugas (UI Mockup)"
+                                                data-action="hapus"
+                                                th:data-tugas-nama="${tugas.namaTugas}">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Footer Fragment -->
+        <div th:replace="~{fragments/layout :: footer}"></div>
+    </div>
+</div>
+
+<!-- Scripts Fragment -->
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+</body>
+</html>

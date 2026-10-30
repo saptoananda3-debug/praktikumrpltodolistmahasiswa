@@ -1,0 +1,6 @@
+com\mahasiswa\todolist\model\Tugas.class
+com\mahasiswa\todolist\TodolistMahasiswaApplication.class
+com\mahasiswa\todolist\controller\TugasController.class
+com\mahasiswa\todolist\controller\DashboardController.class
+com\mahasiswa\todolist\service\TugasService.class
+com\mahasiswa\todolist\repository\TugasRepository.class

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="id">
+<head th:replace="~{fragments/layout :: html_head('Daftar Tugas - To-Do List Mahasiswa')}">
+</head>
+<body>
+
+<div class="app-wrapper">
+    <!-- Overlay untuk Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar Fragment -->
+    <div th:replace="~{fragments/layout :: sidebar(${activePage})}"></div>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Header Fragment -->
+        <div th:replace="~{fragments/layout :: top_header(${pageTitle})}"></div>
+
+        <!-- Main Content Area -->
+        <main class="content-area">
+
+            <!-- Card Filter, Pencarian, & Tambah Tugas -->
+            <div class="card-custom p-4 mb-4">
+                <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-3">
+                    <div>
+                        <h4 class="fw-bold mb-1">Manajemen Tugas Mahasiswa</h4>
+                        <p class="text-muted small mb-0">Kelola dan filter seluruh tugas berdasarkan mata kuliah, status pengerjaan, dan deadline</p>
+                    </div>
+                    <div>
+                        <a th:href="@{/tugas/tambah}" class="btn btn-primary-custom">
+                            <i class="bi bi-plus-lg"></i> Tambah Tugas Baru
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Baris Filter & Pencarian -->
+                <div class="row g-2 pt-2 border-top">
+                    <!-- 1. Kolom Pencarian Tugas -->
+                    <div class="col-12 col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0 text-muted">
+                                <i class="bi bi-search"></i>
+                            </span>
+                            <input type="text" id="searchTugas" class="form-control form-control-custom border-start-0 ps-0" 
+                                   placeholder="Cari nama tugas atau mata kuliah...">
+                        </div>
+                    </div>
+
+                    <!-- 2. Dropdown Filter Mata Kuliah -->
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <select id="filterMatkul" class="form-select form-select-custom">
+                            <option value="">Semua Mata Kuliah</option>
+                            <option th:each="matkul : ${mataKuliahList}" th:value="${matkul}" th:text="${matkul}">
+                                Basis Data Lanjut
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- 3. Dropdown Filter Status -->
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <select id="filterStatus" class="form-select form-select-custom">
+                            <option value="">Semua Status</option>
+                            <option value="Belum Dikerjakan">Belum Dikerjakan</option>
+                            <option value="Sedang Dikerjakan">Sedang Dikerjakan</option>
+                            <option value="Selesai">Selesai</option>
+                        </select>
+                    </div>
+
+                    <!-- 4. Pilihan Pengurutan Deadline -->
+                    <div class="col-12 col-md-2">
+                        <select id="sortDeadline" class="form-select form-select-custom">
+                            <option value="asc">Deadline Terdekat</option>
+                            <option value="desc">Deadline Terjauh</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabel Seluruh Tugas -->
+            <div class="card-custom">
+                <div class="table-responsive">
+                    <table class="table table-custom table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">No.</th>
+                                <th>Nama Tugas</th>
+                                <th>Mata Kuliah</th>
+                                <th>Deskripsi</th>
+                                <th>Deadline</th>
+                                <th>Prioritas</th>
+                                <th>Status</th>
+                                <th class="text-center" style="width: 120px;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tugasTableBody">
+                            <!-- Iterasi Data Dummy Tugas Menggunakan Thymeleaf -->
+                            <tr th:each="tugas, iterStat : ${daftarTugas}" 
+                                class="tugas-row"
+                                th:data-nama="${tugas.namaTugas}"
+                                th:data-matkul="${tugas.mataKuliah}"
+                                th:data-status="${tugas.status}"
+                                th:data-deadline="${tugas.deadline}">
+                                
+                                <td class="fw-semibold text-muted" th:text="${iterStat.count}">1</td>
+                                <td>
+                                    <div class="fw-semibold text-dark" th:text="${tugas.namaTugas}">Nama Tugas</div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border px-2 py-1" th:text="${tugas.mataKuliah}">Mata Kuliah</span>
+                                </td>
+                                <td>
+                                    <span class="text-muted small d-inline-block text-truncate" style="max-width: 240px;" 
+                                          th:title="${tugas.deskripsi}" 
+                                          th:text="${tugas.deskripsi}">
+                                        Deskripsi tugas kuliah
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1">
+                                        <i class="bi bi-calendar-check text-muted small"></i>
+                                        <span class="fw-medium" th:text="${tugas.formattedDeadline}">01 Nov 2026</span>
+                                    </div>
+                                    <!-- Label Terlambat untuk contoh tugas yang melewati batas waktu -->
+                                    <span th:if="${tugas.terlambat}" class="badge badge-custom badge-terlambat mt-1">
+                                        <i class="bi bi-exclamation-triangle-fill"></i> Terlambat
+                                    </span>
+                                </td>
+                                <td>
+                                    <!-- Badge Prioritas -->
+                                    <span th:if="${tugas.prioritas == 'Tinggi'}" class="badge badge-custom badge-prioritas-tinggi">
+                                        <i class="bi bi-flag-fill"></i> Tinggi
+                                    </span>
+                                    <span th:if="${tugas.prioritas == 'Sedang'}" class="badge badge-custom badge-prioritas-sedang">
+                                        <i class="bi bi-flag-fill"></i> Sedang
+                                    </span>
+                                    <span th:if="${tugas.prioritas == 'Rendah'}" class="badge badge-custom badge-prioritas-rendah">
+                                        <i class="bi bi-flag-fill"></i> Rendah
+                                    </span>
+                                </td>
+                                <td>
+                                    <!-- Badge Status -->
+                                    <span th:if="${tugas.status == 'Belum Dikerjakan'}" class="badge badge-custom badge-status-belum">
+                                        <i class="bi bi-circle"></i> Belum Dikerjakan
+                                    </span>
+                                    <span th:if="${tugas.status == 'Sedang Dikerjakan'}" class="badge badge-custom badge-status-sedang">
+                                        <i class="bi bi-hourglass-split"></i> Sedang Dikerjakan
+                                    </span>
+                                    <span th:if="${tugas.status == 'Selesai'}" class="badge badge-custom badge-status-selesai">
+                                        <i class="bi bi-check-circle-fill"></i> Selesai
+                                    </span>
+                                </td>
+                                <td>
+                                    <!-- Tombol Edit dan Hapus (Elemen UI Saja) -->
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <button type="button" class="btn-action btn-edit" 
+                                                title="Edit Tugas (UI Mockup)"
+                                                data-action="edit"
+                                                th:data-tugas-nama="${tugas.namaTugas}">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button type="button" class="btn-action btn-delete" 
+                                                title="Hapus Tugas (UI Mockup)"
+                                                data-action="hapus"
+                                                th:data-tugas-nama="${tugas.namaTugas}">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Footer Fragment -->
+        <div th:replace="~{fragments/layout :: footer}"></div>
+    </div>
+</div>
+
+<!-- Scripts Fragment -->
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+</body>
+</html>
